@@ -106,11 +106,18 @@ The API implements `rate-limiter-flexible` with a Redis backend. This architectu
 When a user exceeds the limit, the API returns a structured error:
 ```json
 {
-  "message": "Too Many Requests",
-  "retry_after": 45,
-  "reset_time": "2026-04-02T10:15:00.000Z"
+  "success": false,
+  "message": "Too Many Requests. Please try again later.",
+  "retryAfterSeconds": 45
 }
 ```
+
+### Rate Limit Headers (RFC 6585)
+All responses include real-time rate limiting metadata:
+- `X-RateLimit-Limit`: Maximum requests allowed in the window.
+- `X-RateLimit-Remaining`: Remaining points for the current client.
+- `X-RateLimit-Reset`: Timestamp for when the limit resets. (Only on 429)
+- `Retry-After`: Seconds to wait before retrying. (Only on 429)
 
 ---
 
@@ -134,6 +141,12 @@ When a user exceeds the limit, the API returns a structured error:
 - **Headers**: `Authorization: Bearer <token>`
 - **Response**: Details of the currently authenticated user.
 
+### 3. Protected Routes (RBAC)
+`GET /users/admin`
+- **Headers**: `Authorization: Bearer <admin_token>`
+- **Role Required**: `admin`
+- **Response**: `200 OK` with a message confirming admin access.
+
 ---
 
 ## 📂 Directory Structure
@@ -156,8 +169,8 @@ When a user exceeds the limit, the API returns a structured error:
 
 1. [ ] Ensure `MONGO_URI` and `REDIS_` credentials are encrypted in your CI/CD.
 2. [ ] Set `NODE_ENV=production`.
-3. [ ] Configure `trust proxy` in `index.js` if deploying behind Load Balancers (AWS ALB, Nginx).
-4. [ ] Enable `RateLimiterRedis` to avoid "Memory Leaks" associated with local dev in-memory limiters.
+3. [x] Configure `trust proxy` in `index.js` if deploying behind Load Balancers (AWS ALB, Nginx).
+4. [x] Enable `RateLimiterRedis` to avoid "Memory Leaks" associated with local dev in-memory limiters.
 
 ---
 
