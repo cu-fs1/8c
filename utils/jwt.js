@@ -16,8 +16,8 @@ export const getRefreshSecret = () => {
   return process.env.JWT_REFRESH_SECRET;
 };
 
-export const generateToken = (userId) => {
-  return jwt.sign({ sub: userId }, getJwtSecret(), {
+export const generateToken = (userId, role) => {
+  return jwt.sign({ sub: userId, role }, getJwtSecret(), {
     expiresIn: process.env.JWT_EXPIRES_IN || "15m",
   });
 };

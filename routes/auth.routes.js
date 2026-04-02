@@ -8,12 +8,14 @@ import {
 } from "../controllers/auth.controller.js";
 import authMiddleware from "../middleware/auth.middleware.js";
 import { createRateLimitMiddleware } from "../middleware/ratelimit.middleware.js";
+import authorize from "../middleware/role.middleware.js";
 
 const router = express.Router();
 
 // Define limiters
 const authLimiter = createRateLimitMiddleware(5, 60); // 5 per minute for auth routes
 const profileLimiter = createRateLimitMiddleware(100, 60); // 100 per minute for profile
+const adminLimiter = createRateLimitMiddleware(50, 60); // 50 per minute for admin
 
 // Apply to individual routes
 router.post("/register", authLimiter, registerUser);
@@ -22,5 +24,10 @@ router.post("/refresh", authLimiter, refreshAccessToken);
 router.post("/logout", authMiddleware, authLimiter, logoutUser);
 
 router.get("/me", authMiddleware, profileLimiter, getCurrentUser);
+
+// Admin-only route for demonstration
+router.get("/admin", authMiddleware, authorize("admin"), adminLimiter, (req, res) => {
+  res.status(200).json({ message: "Welcome Admin! This is a protected route." });
+});
 
 export default router;

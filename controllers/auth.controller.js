@@ -37,7 +37,7 @@ export const loginUser = async (req, res) => {
     throw createError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
   }
 
-  const token = generateToken(user._id.toString());
+  const token = generateToken(user._id.toString(), user.role);
   const refreshToken = generateRefreshToken(user._id.toString());
 
   user.refreshToken = refreshToken;
@@ -82,7 +82,7 @@ export const refreshAccessToken = async (req, res) => {
     );
   }
 
-  const newAccessToken = generateToken(user._id.toString());
+  const newAccessToken = generateToken(user._id.toString(), user.role);
   const newRefreshToken = generateRefreshToken(user._id.toString());
 
   user.refreshToken = newRefreshToken;
