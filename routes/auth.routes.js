@@ -13,9 +13,9 @@ import authorize from "../middleware/role.middleware.js";
 const router = express.Router();
 
 // Define limiters
-const authLimiter = createRateLimitMiddleware(5, 60); // 5 per minute for auth routes
-const profileLimiter = createRateLimitMiddleware(100, 60); // 100 per minute for profile
-const adminLimiter = createRateLimitMiddleware(50, 60); // 50 per minute for admin
+const authLimiter = createRateLimitMiddleware(5, 60, "auth"); // 5 per minute for auth routes
+const profileLimiter = createRateLimitMiddleware(100, 60, "profile"); // 100 per minute for profile
+const adminLimiter = createRateLimitMiddleware(50, 60, "admin"); // 50 per minute for admin
 
 // Apply to individual routes
 router.post("/register", authLimiter, registerUser);
