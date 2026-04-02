@@ -35,3 +35,9 @@ export const verifyAccessToken = (token) => {
 export const verifyRefreshToken = (token) => {
   return jwt.verify(token, getRefreshSecret());
 };
+
+export const generateUserTokens = (user) => {
+  const accessToken = generateToken(user._id.toString(), user.role);
+  const refreshToken = generateRefreshToken(user._id.toString());
+  return { accessToken, refreshToken };
+};

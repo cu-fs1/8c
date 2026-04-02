@@ -3,6 +3,7 @@ import {
   generateToken,
   generateRefreshToken,
   verifyRefreshToken,
+  generateUserTokens,
 } from "../utils/jwt.js";
 import { StatusCodes } from "http-status-codes";
 import createError from "http-errors";
@@ -37,8 +38,7 @@ export const loginUser = async (req, res) => {
     throw createError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
   }
 
-  const token = generateToken(user._id.toString(), user.role);
-  const refreshToken = generateRefreshToken(user._id.toString());
+  const { accessToken, refreshToken } = generateUserTokens(user);
 
   user.refreshToken = refreshToken;
   await user.save();
@@ -46,7 +46,7 @@ export const loginUser = async (req, res) => {
   return res.status(StatusCodes.OK).json({
     message: "Login successful",
     data: {
-      access_token: token,
+      access_token: accessToken,
       refresh_token: refreshToken,
       token_type: "Bearer",
       id: user._id,
@@ -82,8 +82,7 @@ export const refreshAccessToken = async (req, res) => {
     );
   }
 
-  const newAccessToken = generateToken(user._id.toString(), user.role);
-  const newRefreshToken = generateRefreshToken(user._id.toString());
+  const { accessToken, refreshToken: newRefreshToken } = generateUserTokens(user);
 
   user.refreshToken = newRefreshToken;
   await user.save();
@@ -91,7 +90,7 @@ export const refreshAccessToken = async (req, res) => {
   return res.status(StatusCodes.OK).json({
     message: "Token refreshed successfully",
     data: {
-      access_token: newAccessToken,
+      access_token: accessToken,
       refresh_token: newRefreshToken,
       token_type: "Bearer",
     },
