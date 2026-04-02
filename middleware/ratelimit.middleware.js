@@ -26,13 +26,18 @@ export const createRateLimitMiddleware = (points, duration, keyPrefix = "rl") =>
         next();
       })
       .catch((rateLimiterRes) => {
+        const retryAfterSeconds = Math.ceil(rateLimiterRes.msBeforeNext / 1000);
         res.set({
-          "Retry-After": Math.ceil(rateLimiterRes.msBeforeNext / 1000),
+          "Retry-After": retryAfterSeconds,
           "X-RateLimit-Limit": points,
           "X-RateLimit-Remaining": rateLimiterRes.remainingPoints,
-          "X-RateLimit-Reset": new Date(Date.now() + rateLimiterRes.msBeforeNext).toISOString(),
+          "X-RateLimit-Reset": new Date(Date.now() + rateLimiterRes.msBeforeNext),
         });
-        res.status(429).json({ message: "Too Many Requests" });
+        res.status(429).json({
+          success: false,
+          message: "Too Many Requests. Please try again later.",
+          retryAfterSeconds,
+        });
       });
   };
 };
