@@ -7,6 +7,9 @@ dotenv.config();
 const client = createClient({
     username: process.env.REDIS_USERNAME || 'default',
     password: process.env.REDIS_PASSWORD || '',
+    // Align with node-rate-limiter-flexible wiki: do not queue commands while Redis is unavailable.
+    // This makes limiter fail fast and lets middleware decide (it currently fails open).
+    disableOfflineQueue: true,
     socket: {
         host: process.env.REDIS_HOST || '127.0.0.1',
         port: parseInt(process.env.REDIS_PORT || '13365'),
