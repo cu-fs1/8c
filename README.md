@@ -56,7 +56,7 @@ sequenceDiagram
 
 - **Node.js**: v20 or higher
 - **MongoDB**: Atlas or local instance
-- **Redis**: Cloud or local instance (Standard port: 6379, or custom from `.env`)
+- **Redis**: Cloud or local instance (use the port from `.env` - this project defaults to `13365`)
 
 ### Installation
 
@@ -92,6 +92,10 @@ sequenceDiagram
 ## 🛡️ Redis Rate Limiting & Security
 
 The API implements `rate-limiter-flexible` with a Redis backend. This architecture is crucial for distributed systems where multiple server nodes share the same limit state.
+
+Key behaviors:
+- The limiter key is based on the real client IP. If your app is behind a proxy/load balancer, it uses the first value from `x-forwarded-for` (and falls back to `req.ip`).
+- If Redis is temporarily unavailable or errors occur, the middleware is fail-open (requests are allowed through) to avoid taking your API down due to limiter storage issues.
 
 ### Configured Limiters
 
