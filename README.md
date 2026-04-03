@@ -9,7 +9,7 @@ A high-performance, secure Backend API built with **Node.js**, **Express**, and 
 - **🔐 Secure Authentication**: JWT-based flow with Access and Refresh tokens (stored securely and invalidated on logout).
 - **🛡️ Multi-Layered Middleware**:
     - **Logging**: Real-time request/response tracking via Winston.
-    - **Security**: CORS, role-based authorization (RBAC), and IP-based rate limiting.
+    - **Security**: CORS, multi-role authorization (RBAC), and IP-based rate limiting.
 - **⚡ Redis Acceleration**: Offloads rate limiting to Redis for sub-millisecond overhead and horizontal scalability.
 - **📦 Reliable Storage**: Mongoose-based data modeling with automated indexing.
 - **🧩 Scalable Architecture**: Domain-driven directory structure for easy maintenance and expansion.
@@ -144,7 +144,7 @@ All responses include real-time rate limiting metadata:
 ### 3. Protected Routes (RBAC)
 `GET /users/admin`
 - **Headers**: `Authorization: Bearer <admin_token>`
-- **Role Required**: `admin`
+- **Roles Required**: `admin` (the user must have at least one of the required roles in their `roles` array)
 - **Response**: `200 OK` with a message confirming admin access.
 
 ---

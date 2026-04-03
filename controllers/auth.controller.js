@@ -23,6 +23,7 @@ export const registerUser = async (req, res) => {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
+      roles: user.roles,
       createdAt: user.createdAt,
     },
   });
@@ -52,6 +53,7 @@ export const loginUser = async (req, res) => {
       id: user._id,
       fullName: user.fullName,
       email: user.email,
+      roles: user.roles,
     },
   });
 };

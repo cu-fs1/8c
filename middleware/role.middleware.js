@@ -13,12 +13,13 @@ const authorize = (...allowedRoles) => {
         .json({ message: "Unauthorized: User not found in request" });
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
-      return res
-        .status(StatusCodes.FORBIDDEN)
-        .json({
-          message: `Forbidden: You do not have permission to perform this action. Required: ${allowedRoles.join(", ")}`,
-        });
+    const hasRequiredRole = req.user.roles.some((role) =>
+      allowedRoles.includes(role),
+    );
+    if (!hasRequiredRole) {
+      return res.status(StatusCodes.FORBIDDEN).json({
+        message: `Forbidden: You do not have permission to perform this action. Required one of: ${allowedRoles.join(", ")}`,
+      });
     }
 
     next();

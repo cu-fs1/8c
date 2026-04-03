@@ -16,8 +16,8 @@ export const getRefreshSecret = () => {
   return process.env.JWT_REFRESH_SECRET;
 };
 
-export const generateToken = (userId, role) => {
-  return jwt.sign({ sub: userId, role }, getJwtSecret(), {
+export const generateToken = (userId, roles) => {
+  return jwt.sign({ sub: userId, roles }, getJwtSecret(), {
     expiresIn: process.env.JWT_EXPIRES_IN || "15m",
   });
 };
@@ -37,7 +37,7 @@ export const verifyRefreshToken = (token) => {
 };
 
 export const generateUserTokens = (user) => {
-  const accessToken = generateToken(user._id.toString(), user.role);
+  const accessToken = generateToken(user._id.toString(), user.roles);
   const refreshToken = generateRefreshToken(user._id.toString());
   return { accessToken, refreshToken };
 };
